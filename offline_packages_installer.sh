@@ -714,7 +714,7 @@ create_offline_installers(){
     echo "For installing packages offline, just start this script with Mode 3 (Install packages offline)."
     echo ""
     echo "You can add new packages to this script CONFIG section and run \"Download packages\" again at any time for adding new packages."
-    echo "But remember! Always download only on fresh installed Linux to include all the necessary dependencies!"
+    echo "But remember! Always download from apt repositories only on fresh installed Linux to include all the necessary dependencies!"
     echo "There is no need to download all packages again, only new packages will be downloaded."
     echo "You can use environment variables to make the script more subtle. All variables are listed in a comment at the top of the script."
     echo ""
