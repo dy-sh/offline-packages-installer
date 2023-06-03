@@ -3,13 +3,13 @@
 
 # ================================= CONFIG =========================================
 
-# MODE=1
+# MODE=3
 
 # CONFIRM_ALL=true
 
 # REDOWNLOAD_IF_EXIST=true
 # SKIP_ADD_REPOS=true
-# SKIP_DOWNLOAD_APK=true
+# SKIP_DOWNLOAD_APT=true
 # SKIP_DOWNLOAD_DOWNLOAD_DEB=true
 # SKIP_DOWNLOAD_APPIMAGE=true
 # SKIP_DOWNLOAD_BUNDLE=true
@@ -17,7 +17,7 @@
 # SKIP_DOWNLOAD_LIBS=true
 
 # REINSTALL=true
-# SKIP_INSTALL_APK=true
+# SKIP_INSTALL_APT=true
 # SKIP_INSTALL_DOWNLOAD_DEB=true
 # SKIP_INSTALL_APPIMAGE=true
 # SKIP_INSTALL_BUNDLE=true
@@ -37,6 +37,10 @@ soft=(
 "LINUX-DEV/Docker | docker.io | apt" 
 "LINUX-DEV/Git | git | apt" 
 "LINUX-DEV/Git | gitkraken | deb | https://release.gitkraken.com/linux/gitkraken-amd64.deb" 
+"LINUX-DEV/Jetbrains | CLion | bin | https://download-cdn.jetbrains.com/cpp/CLion-2023.1.3.tar.gz" # https://www.jetbrains.com/clion/download/#section=linux
+"LINUX-DEV/Jetbrains | PyCharm | bin | https://download-cdn.jetbrains.com/python/pycharm-community-2023.1.2.tar.gz" # https://www.jetbrains.com/pycharm/download/#section=linux
+"LINUX-DEV/Jetbrains | Rider | bin | https://download-cdn.jetbrains.com/rider/JetBrains.Rider-2023.1.2.tar.gz" # https://www.jetbrains.com/rider/download/#section=linux
+"LINUX-DEV/Jetbrains | WebStorm | bin | https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.2.tar.gz" # https://www.jetbrains.com/webstorm/download/#section=linux
 "LINUX-DEV/Node | nodejs  | apt" 
 "LINUX-DEV/Node | npm  | apt" 
 "LINUX-DEV/REST | httpie  | apt" 
@@ -81,12 +85,16 @@ libs=(
     libgdk-pixbuf2.0-0 
     libnetfilter-queue1
     libp8-platform2
+    libwxbase3.0-0v5 
+    libwxgtk3.0-gtk3-0v5
 )
 
 
 add_repos(){
     if [[ ! -v SKIP_ADD_REPOS ]]; then
         echo -e "\n=========================== ADDING REPOSITORIES ===========================\n"
+        mkdir "repo.temp"; cd "repo.temp" || exit
+
         # appimagelauncher
         sudo add-apt-repository -y ppa:appimagelauncher-team/stable
 
@@ -107,9 +115,10 @@ add_repos(){
         wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/tee packages.microsoft.gpg > /dev/null
         sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
         sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-        
         # sudo apt-get install apt-transport-https
         sudo apt-get updatefailed_down_packages
+
+        cd ..; rm -r "repo.temp"
     fi
 }
 
@@ -169,17 +178,18 @@ remove_old_temp_files(){
 
 
 download_with_apt_offline(){
-    local package="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local pkg_name="$2"
+    local archive_name="$3"
+
 
     # skip if exist
     if [[ ! -v REDOWNLOAD_IF_EXIST && -f "$archive_name" ]]; then echo "Exist. Skipping."; return 0; fi
 
     # download
-    sudo apt-offline set "$package.sig" --install-packages "$package"
-    apt-offline get "$package.sig" --bundle "$archive_name.temp"
-    rm -f "$package.sig"
+    sudo apt-offline set "$pkg_name.sig" --install-packages "$pkg_name"
+    apt-offline get "$pkg_name.sig" --bundle "$archive_name.temp"
+    rm -f "$pkg_name.sig"
     
     if [[ ! -f "$archive_name.temp" ]]; then return 1; fi
 
@@ -200,34 +210,47 @@ download_with_apt_offline(){
 }
 
 download_with_wget(){
-    local url="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local pkg_name="$2"
+    local archive_name="$3"
+    local url="$4"
 
     # skip if exist
     if [[ ! -v REDOWNLOAD_IF_EXIST && -f "$archive_name" ]]; then echo "Exist. Skipping."; return 0; fi
 
     # download
+    rm -r "$pkg_name.temp"
+    mkdir -p "$pkg_name.temp"
+    cd "$pkg_name.temp" || return 1
+
     # use --continue or --backups=1 for overwrite existing file with original file name
-    down_filename=$(wget --backups=1 --content-disposition "$url" 2>&1 | grep "Saving to" --line-buffered | sed -r 's/Saving to: ‘(.*)’/\1/')
+    wget "$url"
 
+    down_filename="$(ls)"
+    
     # if no file downloaded
-    if [[ $down_filename == "" || ! -f $down_filename ]]; then return 1; fi
+    if [[ $down_filename == "" || ! -f $down_filename ]]; then 
+        cd ..
+        rm -r "$pkg_name.temp"
+        return 1; 
+    fi
 
-    # if archive is empty (something wrong) 
+    # if file is empty (something wrong) 
     filesize=$(wc -c <"$down_filename") 
     if ((filesize==0)); then
-        rm -f "$down_filename"
-        return 1;
+        cd ..
+        rm -r "$pkg_name.temp"
+        return 1; 
     fi
-    
+        
     # delete old if exist
-    if [[ -f "$archive_name" ]]; then rm -f "$archive_name"; fi
+    if [[ -f "../$archive_name" ]]; then rm -f "../$archive_name"; fi
 
-    zip "$archive_name" "$down_filename"
+    7z a "../$archive_name" "$down_filename" # using 7z instead of zip to showing the progress
 
-    # delete downloaded file
-    rm -f "$down_filename"
+    # clean
+    cd ..
+    rm -r "$pkg_name.temp"
 
     new_down_packages+=("$pkg_info")
 }
@@ -262,28 +285,28 @@ download_packages(){
 
         # downloading deb from apt repository
         if [[ $source == "apt" ]]; then
-            if [[ -v SKIP_DOWNLOAD_APK ]]; then continue; fi
-            if ! download_with_apt_offline "$pkg_name" "$archive_name" "$pkg_info"; then add_failed_downloading "$pkg_info"; continue; fi
+            if [[ -v SKIP_DOWNLOAD_APT ]]; then continue; fi
+            if ! download_with_apt_offline "$pkg_info" "$pkg_name" "$archive_name"; then add_failed_downloading "$pkg_info"; continue; fi
 
         # downloading deb from site
         elif [[ $source == "deb" ]]; then
             if [[ -v SKIP_DOWNLOAD_DEB ]]; then continue; fi
-            if ! download_with_wget "$url" "$archive_name" "$pkg_info"; then add_failed_downloading "$pkg_info"; continue; fi
+            if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
 
         # downloading AppImage
         elif [[ $source == "AppImage" ]]; then
             if [[ -v SKIP_DOWNLOAD_APPIMAGE ]]; then continue; fi
-            if ! download_with_wget "$url" "$archive_name" "$pkg_info"; then add_failed_downloading "$pkg_info"; continue; fi
+            if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
 
         # downloading bundle
         elif [[ $source == "bundle" ]]; then
             if [[ -v SKIP_DOWNLOAD_BUNDLE ]]; then continue; fi
-            if ! download_with_wget "$url" "$archive_name" "$pkg_info"; then add_failed_downloading "$pkg_info"; continue; fi
+            if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
         
         # downloading bin
         elif [[ $source == "bin" ]]; then
             if [[ -v SKIP_DOWNLOAD_BIN ]]; then continue; fi
-            if ! download_with_wget "$url" "$archive_name" "$pkg_info"; then add_failed_downloading "$pkg_info"; continue; fi
+            if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
 
         else
             add_failed_downloading "$pkg_info"            
@@ -324,7 +347,7 @@ download_libs(){
 
         # download with apt without dependecies
         # if ! apt download "$pkg_name"; then add_failed_downloading "$pkg_name"; continue; fi
-        # zip "$pkg_name.zip" *.deb
+        # 7z a "$pkg_name.zip" *.deb
 
         # download with apt-offline including dependecies
         sudo apt-offline set "$pkg_name.sig" --install-packages "$pkg_name"
@@ -363,22 +386,22 @@ add_failed_install(){
 }
 
 install_with_apt_offline(){
-    local package="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local pkg_name="$2"
+    local archive_name="$3"
 
     # doesn`t work offline 
     # # install
     # if ! sudo apt-offline install "$archive_name"; then return 1; fi
 
     # if [[ -v REINSTALL ]]; then
-    #     if ! sudo apt --reinstall install "$package"; then return 1; fi
+    #     if ! sudo apt --reinstall install "$pkg_name"; then return 1; fi
     # else
-    #     if ! sudo apt install "$package"; then return 1; fi
-    # fi    
+    #     if ! sudo apt install "$pkg_name"; then return 1; fi
+    # fi   
 
     # unachive
-    unzip "$archive_name" -d "$archive_name.temp"
+    7z x "$archive_name" -o"$archive_name.temp"
     cd "$archive_name.temp" || return 1
 
     # install
@@ -394,12 +417,12 @@ install_with_apt_offline(){
 }
 
 install_deb(){
-    local url="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local url="$2"
+    local archive_name="$3"
 
     # unachive
-    unzip "$archive_name" -d "$archive_name.temp"
+    7z x "$archive_name" -o"$archive_name.temp"
     cd "$archive_name.temp" || return 1
 
     # install
@@ -415,12 +438,12 @@ install_deb(){
 }
 
 install_appimage(){
-    local url="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local url="$2"
+    local archive_name="$3"
 
     # unachive
-    unzip "$archive_name" -d "$archive_name.temp"
+    7z x "$archive_name" -o"$archive_name.temp"
     cd "$archive_name.temp" || return 1
 
     # install
@@ -431,7 +454,7 @@ install_appimage(){
         if [[ -f "$HOME/Applications/${files[$i]}" ]]; then 
             echo "App already installed. Skip."
         else
-            cp "${files[$i]}" "$HOME/Applications"
+            mv "${files[$i]}" "$HOME/Applications"
             chmod +x "$HOME/Applications/${files[$i]}"
         fi
     done
@@ -442,12 +465,12 @@ install_appimage(){
 }
 
 install_bundle(){
-    local url="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
+    local pkg_info="$1"
+    local url="$2"
+    local archive_name="$3"
 
     # unachive
-    unzip "$archive_name" -d "$archive_name.temp"
+    7z x "$archive_name" -o"$archive_name.temp"
     cd "$archive_name.temp" || return 1
 
     # install
@@ -465,10 +488,10 @@ install_bundle(){
 
 
 install_bin(){    
-    local url="$1"
-    local archive_name="$2"
-    local pkg_info="$3"
-    local pkg_name="$4"
+    local pkg_info="$1"
+    local pkg_name="$2"
+    local url="$3"
+    local archive_name="$4"
 
     install_dir="/opt"
 
@@ -478,7 +501,7 @@ install_bin(){
     fi
 
     # unachive
-    unzip "$archive_name" -d "$archive_name.temp"
+    7z x "$archive_name" -o"$archive_name.temp"
     cd "$archive_name.temp" || return 1
 
     temp_file="$(ls)"    
@@ -486,11 +509,11 @@ install_bin(){
     # unachive
     mkdir -p "$pkg_name"
     if [[ $temp_file == *.tar.gz ]]; then
-        if ! tar -xf "$temp_file" -C "$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
+        if ! tar -xf "$temp_file" -C "$pkg_name" --checkpoint=.1000; then rm -r "$archive_name.temp"; return 1; fi
     elif [[ $temp_file == *.tar.xz ]]; then
-        if ! tar -xf "$temp_file" -C "$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
+        if ! tar -xf "$temp_file" -C "$pkg_name" --checkpoint=.1000; then rm -r "$archive_name.temp"; return 1; fi
     elif [[ $temp_file == *.zip ]]; then
-        if ! unzip "$temp_file" -d "$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
+        if ! 7z x "$temp_file" -0"$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
     elif [[ $temp_file == *.7z ]]; then
         if ! 7z x "$temp_file" -o"$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
     else
@@ -521,7 +544,7 @@ install_bin(){
         fi
     fi
    
-    echo "Copying \"$unarchived_dir\" to /opt/"
+    echo "Extracting \"$unarchived_dir\" to /opt/"
     sudo mv "$unarchived_dir" "$install_dir"
 
     # clean
@@ -556,28 +579,28 @@ install_packages(){
 
         # install deb from apt repository
         if [[ $source == "apt" ]]; then
-            if [[ -v SKIP_INSTALL_APK ]]; then continue; fi
-            if ! install_with_apt_offline "$pkg_name" "$archive_name" "$pkg_info"; then add_failed_install "$pkg_info"; continue; fi
+            if [[ -v SKIP_INSTALL_APT ]]; then continue; fi
+            if ! install_with_apt_offline "$pkg_info" "$pkg_name" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install deb from site
         elif [[ $source == "deb" ]]; then
             if [[ -v SKIP_INSTALL_DEB ]]; then continue; fi
-            if ! install_deb "$url" "$archive_name" "$pkg_info"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_deb "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install AppImage
         elif [[ $source == "AppImage" ]]; then
             if [[ -v SKIP_INSTALL_APPIMAGE ]]; then continue; fi
-            if ! install_appimage "$url" "$archive_name" "$pkg_info"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_appimage "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install bundle
         elif [[ $source == "bundle" ]]; then
             if [[ -v SKIP_INSTALL_BUNDLE ]]; then continue; fi
-            if ! install_bundle "$url" "$archive_name" "$pkg_info"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_bundle "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
         
         # install bin
         elif [[ $source == "bin" ]]; then
             if [[ -v SKIP_INSTALL_BIN ]]; then continue; fi
-            if ! install_bin "$url" "$archive_name" "$pkg_info" "$pkg_name"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_bin "$pkg_info" "$pkg_name" "$url" "$archive_name" ; then add_failed_install "$pkg_info"; continue; fi
 
         else
             add_failed_install "$pkg_info"            
@@ -617,7 +640,7 @@ install_libs(){
 
   
         # unachive
-        unzip "$pkg_name.zip" -d "$pkg_name.temp"
+        7z x "$pkg_name.zip" -o"$pkg_name.temp"
         if ! cd "$pkg_name.temp"; then add_failed_install "$pkg_name"; continue; fi
 
         # install
