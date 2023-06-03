@@ -48,7 +48,7 @@ soft=(
 "LINUX-DEV/VSCode | code  | apt" 
 "LINUX-SOFT/Archivers | peazip | deb | https://github.com/peazip/PeaZip/releases/download/9.2.0/peazip_9.2.0.LINUX.GTK2-1_amd64.deb" # https://peazip.github.io/peazip-linux.html 
 "LINUX-SOFT/Audio/Editors | audacity | apt" 
-"LINUX-SOFT/Audio/Editors | reaper | bin | https://www.reaper.fm/files/6.x/reaper680_linux_x86_64.tar.xz" # https://www.reaper.fm/download.php
+"LINUX-SOFT/Audio/Editors | reaper | installer | https://www.reaper.fm/files/6.x/reaper680_linux_x86_64.tar.xz | cd "reaper_linux_x86_64" && sudo './install-reaper.sh' --install /opt --integrate-desktop" # https://www.reaper.fm/download.php
 "LINUX-SOFT/Audio/Editors | saucedacity | AppImage | https://github.com/tenacityteam/saucedacity/releases/download/v1.2.1/saucedacity-1.2.1-linux-x86_64.AppImage" # https://github.com/tenacityteam/saucedacity/releases
 "LINUX-SOFT/Audio/Editors | tenacity | AppImage | https://codeberg.org/attachments/f0e0697d-0f41-4446-b688-781f903dcd77" # https://codeberg.org/tenacityteam/tenacity/releases
 "LINUX-SOFT/Audio/Jack | jackd2 | apt" 
@@ -379,6 +379,27 @@ download_libs(){
 failed_inst_packages=()
 new_inst_packages=()
 
+unachive_in_subdir(){
+    local temp_dir="$1" 
+    local temp_file="$2" 
+    local archive_name="$3" 
+
+    mkdir -p "$temp_dir"
+    if [[ $temp_file == *.tar.gz ]]; then
+        if ! tar -xf "$temp_file" -C "$temp_dir" --checkpoint=.1000; then rm -r "$temp_dir"; return 1; fi
+    elif [[ $temp_file == *.tar.xz ]]; then
+        if ! tar -xf "$temp_file" -C "$temp_dir" --checkpoint=.1000; then rm -r "$temp_dir"; return 1; fi
+    elif [[ $temp_file == *.zip ]]; then
+        if ! 7z x "$temp_file" -0"$temp_dir"; then rm -r "$temp_dir"; return 1; fi
+    elif [[ $temp_file == *.7z ]]; then
+        if ! 7z x "$temp_file" -o"$temp_dir"; then rm -r "$temp_dir"; return 1; fi
+    else
+        rm -r "$temp_dir"
+        echo Unsupported archive type
+        return 1
+    fi
+}
+
 add_failed_install(){
     local package="$1"
     echo -e "\n${RED}!!!!!!!!!!!! Cant install \"$package\" !!!!!!!!!!!!${NOCOLOR}\n"
@@ -386,9 +407,8 @@ add_failed_install(){
 }
 
 install_with_apt_offline(){
-    local pkg_info="$1"
-    local pkg_name="$2"
-    local archive_name="$3"
+    local pkg_name="$1"
+    local archive_name="$2"
 
     # doesn`t work offline 
     # # install
@@ -417,9 +437,7 @@ install_with_apt_offline(){
 }
 
 install_deb(){
-    local pkg_info="$1"
-    local url="$2"
-    local archive_name="$3"
+    local archive_name="$1"
 
     # unachive
     7z x "$archive_name" -o"$archive_name.temp"
@@ -438,9 +456,7 @@ install_deb(){
 }
 
 install_appimage(){
-    local pkg_info="$1"
-    local url="$2"
-    local archive_name="$3"
+    local archive_name="$1"
 
     # unachive
     7z x "$archive_name" -o"$archive_name.temp"
@@ -465,9 +481,7 @@ install_appimage(){
 }
 
 install_bundle(){
-    local pkg_info="$1"
-    local url="$2"
-    local archive_name="$3"
+    local archive_name="$1"
 
     # unachive
     7z x "$archive_name" -o"$archive_name.temp"
@@ -488,10 +502,8 @@ install_bundle(){
 
 
 install_bin(){    
-    local pkg_info="$1"
-    local pkg_name="$2"
-    local url="$3"
-    local archive_name="$4"
+    local pkg_name="$1"
+    local archive_name="$2"
 
     install_dir="/opt"
 
@@ -506,19 +518,11 @@ install_bin(){
 
     temp_file="$(ls)"    
 
-    # unachive
-    mkdir -p "$pkg_name"
-    if [[ $temp_file == *.tar.gz ]]; then
-        if ! tar -xf "$temp_file" -C "$pkg_name" --checkpoint=.1000; then rm -r "$archive_name.temp"; return 1; fi
-    elif [[ $temp_file == *.tar.xz ]]; then
-        if ! tar -xf "$temp_file" -C "$pkg_name" --checkpoint=.1000; then rm -r "$archive_name.temp"; return 1; fi
-    elif [[ $temp_file == *.zip ]]; then
-        if ! 7z x "$temp_file" -0"$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
-    elif [[ $temp_file == *.7z ]]; then
-        if ! 7z x "$temp_file" -o"$pkg_name"; then rm -r "$archive_name.temp"; return 1; fi
-    else
+    # unachive internal
+    if ! unachive_in_subdir "$pkg_name" "$temp_file" "$archive_name"; then
+        # clean
+        cd ..
         rm -r "$archive_name.temp"
-        echo Unsupported archive type
         return 1
     fi
 
@@ -553,6 +557,37 @@ install_bin(){
 }
 
 
+
+
+install_installer(){
+    local pkg_name="$1" 
+    local archive_name="$2"
+    local exec="$3"
+
+    # unachive
+    7z x "$archive_name" -o"$archive_name.temp"
+    cd "$archive_name.temp" || return 1
+    temp_file="$(ls)"   
+
+    # unachive internal
+    if ! unachive_in_subdir "$pkg_name" "$temp_file" "$archive_name"; then
+        # clean
+        cd ..
+        rm -r "$archive_name.temp"
+        return 1
+    fi
+
+    cd "$pkg_name" || return 1
+
+    # install
+    eval $exec
+
+    # clean
+    cd ../../..
+    rm -r "$archive_name.temp"
+}
+
+
 install_packages(){
     echo -e "\n==========================================================================="
     echo -e "=========================== INSTALLING PACKAGES ==========================="
@@ -562,11 +597,12 @@ install_packages(){
     local packages=("$@")
 
     for i in "${!packages[@]}"; do        
-        local pkg_info=$(echo "${packages[$i]}" | sed 's/ //g') # remove spaces
-        local pkg_dir="$dir/$(echo "$pkg_info" | cut -d "|" -f 1)"
-        local pkg_name=$(echo "$pkg_info" | cut -d "|" -f 2)        
-        local source=$(echo "$pkg_info" | cut -d "|" -f 3)
-        local url=$(echo "$pkg_info" | cut -d "|" -f 4)
+        local pkg_info=${packages[$i]}
+        local pkg_dir="$dir/$(echo "$pkg_info" | cut -d "|" -f 1 | xargs)" # xargs for trim spaces
+        local pkg_name=$(echo "$pkg_info" | cut -d "|" -f 2 | xargs)        
+        local source=$(echo "$pkg_info" | cut -d "|" -f 3 | xargs)
+        local url=$(echo "$pkg_info" | cut -d "|" -f 4 | xargs)
+        local args=$(echo "$pkg_info" | cut -d "|" -f 5 | xargs)
         archive_name="$pkg_name.$source.zip"
 
         echo -e "\n==================== Installing package $((i+1)) / ${#packages[@]}: \"$pkg_name\"  ===================="
@@ -580,27 +616,32 @@ install_packages(){
         # install deb from apt repository
         if [[ $source == "apt" ]]; then
             if [[ -v SKIP_INSTALL_APT ]]; then continue; fi
-            if ! install_with_apt_offline "$pkg_info" "$pkg_name" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_with_apt_offline "$pkg_name" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install deb from site
         elif [[ $source == "deb" ]]; then
             if [[ -v SKIP_INSTALL_DEB ]]; then continue; fi
-            if ! install_deb "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_deb "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install AppImage
         elif [[ $source == "AppImage" ]]; then
             if [[ -v SKIP_INSTALL_APPIMAGE ]]; then continue; fi
-            if ! install_appimage "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_appimage "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
 
         # install bundle
         elif [[ $source == "bundle" ]]; then
             if [[ -v SKIP_INSTALL_BUNDLE ]]; then continue; fi
-            if ! install_bundle "$pkg_info" "$url" "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_bundle "$archive_name"; then add_failed_install "$pkg_info"; continue; fi
         
         # install bin
         elif [[ $source == "bin" ]]; then
             if [[ -v SKIP_INSTALL_BIN ]]; then continue; fi
-            if ! install_bin "$pkg_info" "$pkg_name" "$url" "$archive_name" ; then add_failed_install "$pkg_info"; continue; fi
+            if ! install_bin "$pkg_name" "$archive_name" ; then add_failed_install "$pkg_info"; continue; fi
+
+        # install bin
+        elif [[ $source == "installer" ]]; then
+            if [[ -v SKIP_INSTALL_BIN ]]; then continue; fi
+            if ! install_installer "$pkg_name" "$archive_name" "$args"; then add_failed_install "$pkg_info"; continue; fi
 
         else
             add_failed_install "$pkg_info"            
@@ -762,10 +803,20 @@ then
 fi
 
 
+
+
 # ------------------------------------------------------------------------------
 
+MODE=$1
 
-if [[ ! -v MODE ]]; then
+if [[  $MODE == "--help" ]]; then
+    echo "Start without args - Start Wizard"
+    echo "--download - download packages"
+    echo "--install - install packages offline"
+fi
+
+
+if [[ ! -v MODE || $MODE == "" ]]; then
     echo "1. Start Wizard (recomended)"
     echo "2. Download packages"
     echo "3. Install packages offline"
@@ -780,7 +831,7 @@ fi
 
 
 # Download packages
-if [[ $MODE == [2] ]]; then 
+if [[ $MODE == [2] || $MODE == "--download" ]]; then 
     remove_old_temp_files
     add_repos
     apt update
@@ -791,7 +842,7 @@ if [[ $MODE == [2] ]]; then
 fi
 
 # Install packages offline
-if [[ $MODE == [3] ]]; then 
+if [[ $MODE == [3] || $MODE == "--install" ]]; then 
     remove_old_temp_files
     install_packages "./" "${soft[@]}"
     install_libs "./LINUX-LIBS/" "${libs[@]}"
