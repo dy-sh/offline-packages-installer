@@ -5,45 +5,17 @@ This script will help you create software installation packages that you can re-
 The following package sources supported:
 - The package name in the `apt` repository. The package and all required dependencies will be downloaded.
 - Direct link to the `.deb` package (for example, on the developer's website)
-- The link to the archive with binary files
+- The link to the archive with binary files (compiled app or installer)
 - The link to `AppImange`
 
 
+To download programs with all dependencies, you need to run this script on a freshly installed system that hasn't been updated with packages or installed any programs yet.
+Only in this way will you get programs with all the libraries that can be installed offline.
 
-### Step1:
+However, you can also use this script to quickly install all the necessary software on any system, not necessarily fresh. But keep in mind that in this case, the program archives will only have dependencies necessary for the current state of the system and will not be suitable for a freshly installed system.
 
-- Edit this script `CONFIG` section, add software and libraries you like.
-
-### Step2:
-
-- Create VMWare Virtual Machine, change Network Adapter to `Host Only` mode and install Linux.
-`Host Only` mode is needed to prevent updating packages.
-- Shut Down virual machine after installing Linux.
-
-### Step3:
-
-- Create `~/Shared` folder on Host machine and place this script there.
-- Add `~/Shared` folder to `Virtual Machine Settings > Options > Shared Folders (Always enabled)`.
-This folder will be shared between Host and VM.
-
-### Step4:
-
-- Create Virual Machine snapshot.
-- Change VM Network Adapter mode to `Nat`.
-- Power On virtual machine.
-
-### Step5:
-
-- Run this script on VM at `/mnt/hgfs/Shared/` and select Mode 2 (`Download packages`).
-- After downloading you can start script again if somethig wrong. Process will continue, new packages will be downloaded.
-- Complete! 
-
-For installing packages offline, just start this script with Mode 3 (`Install packages offline`).
-
-You can add new packages to this script `CONFIG` section and run `Download packages` again at any time for adding new packages. But remember:
+Edit the list of programs you need in this script and run it. The script will prompt you to download  packages or install already downloaded ones. There is also an interactive wizard that will help you properly download packages with all the necessary dependencies using a fresh system in a virtual machine.
 
 **Always download from apt repositories only on fresh installed Linux to include all the necessary dependencies!**
 
-There is no need to download all packages again, only new packages will be downloaded.
-
-You can use environment variables to make the script more subtle. All variables are listed in a comment at the top of the script.
+You can use environment variables to make the script more subtle. All variables are listed in the comments at the top of the script.

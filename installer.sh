@@ -3,7 +3,7 @@
 
 # ================================= CONFIG =========================================
 
-# MODE=3
+# MODE=d
 
 # CONFIRM_ALL=true
 
@@ -14,6 +14,7 @@
 # SKIP_DOWNLOAD_APPIMAGE=true
 # SKIP_DOWNLOAD_BUNDLE=true
 # SKIP_DOWNLOAD_BIN=true
+# SKIP_DOWNLOAD_INSTALLER
 # SKIP_DOWNLOAD_LIBS=true
 
 # REINSTALL=true
@@ -22,60 +23,141 @@
 # SKIP_INSTALL_APPIMAGE=true
 # SKIP_INSTALL_BUNDLE=true
 # SKIP_INSTALL_BIN=true
+# SKIP_INSTALL_INSTALLER
 # SKIP_INSTALL_LIBS=true
 
 
 soft=(
-"LINUX-DEV/Blender | blender | apt" 
-"LINUX-DEV/C++ | cmake | apt" 
-"LINUX-DEV/C++ | g++ | apt" 
-"LINUX-DEV/C++ | ninja-build  | apt" 
-"LINUX-DEV/Docker | docker | apt" 
-"LINUX-DEV/Docker | docker-compose | apt" 
-"LINUX-DEV/Docker | docker-doc | apt" 
-"LINUX-DEV/Docker | docker-registry | apt" 
-"LINUX-DEV/Docker | docker.io | apt" 
-"LINUX-DEV/Git | git | apt" 
-"LINUX-DEV/Git | gitkraken | deb | https://release.gitkraken.com/linux/gitkraken-amd64.deb" 
-"LINUX-DEV/Jetbrains | CLion | bin | https://download-cdn.jetbrains.com/cpp/CLion-2023.1.3.tar.gz" # https://www.jetbrains.com/clion/download/#section=linux
-"LINUX-DEV/Jetbrains | PyCharm | bin | https://download-cdn.jetbrains.com/python/pycharm-community-2023.1.2.tar.gz" # https://www.jetbrains.com/pycharm/download/#section=linux
-"LINUX-DEV/Jetbrains | Rider | bin | https://download-cdn.jetbrains.com/rider/JetBrains.Rider-2023.1.2.tar.gz" # https://www.jetbrains.com/rider/download/#section=linux
-"LINUX-DEV/Jetbrains | WebStorm | bin | https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.2.tar.gz" # https://www.jetbrains.com/webstorm/download/#section=linux
-"LINUX-DEV/Node | nodejs  | apt" 
-"LINUX-DEV/Node | npm  | apt" 
-"LINUX-DEV/REST | httpie  | apt" 
-"LINUX-DEV/VSCode | apt-transport-https  | apt" 
-"LINUX-DEV/VSCode | code  | apt" 
-"LINUX-SOFT/Archivers | peazip | deb | https://github.com/peazip/PeaZip/releases/download/9.2.0/peazip_9.2.0.LINUX.GTK2-1_amd64.deb" # https://peazip.github.io/peazip-linux.html 
-"LINUX-SOFT/Audio/Editors | audacity | apt" 
-"LINUX-SOFT/Audio/Editors | reaper | installer | https://www.reaper.fm/files/6.x/reaper680_linux_x86_64.tar.xz | cd "reaper_linux_x86_64" && sudo './install-reaper.sh' --install /opt --integrate-desktop" # https://www.reaper.fm/download.php
-"LINUX-SOFT/Audio/Editors | saucedacity | AppImage | https://github.com/tenacityteam/saucedacity/releases/download/v1.2.1/saucedacity-1.2.1-linux-x86_64.AppImage" # https://github.com/tenacityteam/saucedacity/releases
-"LINUX-SOFT/Audio/Editors | tenacity | AppImage | https://codeberg.org/attachments/f0e0697d-0f41-4446-b688-781f903dcd77" # https://codeberg.org/tenacityteam/tenacity/releases
-"LINUX-SOFT/Audio/Jack | jackd2 | apt" 
-"LINUX-SOFT/Audio/Players | quodlibet | apt" 
-"LINUX-SOFT/Crypt | keepassxc | apt" 
-"LINUX-SOFT/Crypt | veracrypt | deb | https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-22.04-amd64.deb" # https://www.veracrypt.fr/en/Downloads.html
-"LINUX-SOFT/Crypt | veracrypt-console | deb | https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-console-1.25.9-Ubuntu-22.04-amd64.deb" # https://www.veracrypt.fr/en/Downloads.html
-"LINUX-SOFT/Disk | krusader | apt" 
-"LINUX-SOFT/Disk/Backup | clonezilla | apt" 
-"LINUX-SOFT/Graphics | gimp | apt" 
-"LINUX-SOFT/Graphics | XnViewMP | deb | https://download.xnview.com/XnViewMP-linux-x64.deb"  # https://www.xnview.com/en/xnviewmp/#downloads
-"LINUX-SOFT/Internet | opensnitch | deb | https://github.com/evilsocket/opensnitch/releases/download/v1.6.0-rc.5/opensnitch_1.6.0-rc.5-1_amd64.deb" # https://github.com/evilsocket/opensnitch/releases
-"LINUX-SOFT/IOT | hyperion | deb | https://github.com/hyperion-project/hyperion.ng/releases/download/2.0.15/Hyperion-2.0.15-Linux-x86_64.deb" # https://github.com/hyperion-project/hyperion.ng/releases 
-"LINUX-SOFT/System | appimagelauncher | apt"
-"LINUX-SOFT/System/Display | xbacklight | apt" 
-"LINUX-SOFT/System/Mouse | barrier | apt" 
-"LINUX-SOFT/System/Test | Geekbench5 | bin | https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz" # https://www.geekbench.com/legacy/
-"LINUX-SOFT/System/Test | Geekbench6 | bin | https://cdn.geekbench.com/Geekbench-6.0.3-Linux.tar.gz" # https://www.geekbench.com/download/
-"LINUX-SOFT/Text | doublecmd-qt | apt"
-"LINUX-SOFT/Text | kdiskmark | apt" 
-"LINUX-SOFT/Text | obsidian | deb | https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/obsidian_1.3.4_amd64.deb" # https://obsidian.md/download
-"LINUX-SOFT/Video | obs-studio | apt" 
-"LINUX-SOFT/Video | vlc | apt" 
-"LINUX-SOFT/VM/VirtualBox | virtualbox-guest-additions-iso | apt" 
-"LINUX-SOFT/VM/VirtualBox | virtualbox-qt | apt" 
-"LINUX-SOFT/VM/VMWare | open-vm-tools-desktop | apt" 
-"LINUX-SOFT/VM/VMWare | vmware-workstation | bundle | https://download3.vmware.com/software/WKST-1702-LX/VMware-Workstation-Full-17.0.2-21581411.x86_64.bundle" # https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html
+
+    "Android | kdeconnect | apt" 
+    "Android | scrcpy | apt" 
+    "Audio / Editors | audacity | apt" 
+    "Audio / Editors | reaper | installer | https://www.reaper.fm/files/6.x/reaper680_linux_x86_64.tar.xz | cd 'reaper_linux_x86_64' && sudo './install-reaper.sh' --install /opt --integrate-desktop" # https://www.reaper.fm/download.php
+    "Audio / Editors | saucedacity | AppImage | https://github.com/tenacityteam/saucedacity/releases/download/v1.2.1/saucedacity-1.2.1-linux-x86_64.AppImage" # https://github.com/tenacityteam/saucedacity/releases
+    "Audio / Jack | jackd2 | apt" 
+    "Audio / Players | quodlibet | apt" 
+    "Audio / TagEditor | exfalso | apt" 
+    "Audio / TagEditor | puddletag | apt" 
+    "Crypt | keepassxc | apt" 
+    "Crypt | veracrypt | deb | https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-22.04-amd64.deb" # https://www.veracrypt.fr/en/Downloads.html
+    "Crypt | veracrypt-console | deb | https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-console-1.25.9-Ubuntu-22.04-amd64.deb" # https://www.veracrypt.fr/en/Downloads.html
+    "Dev / 3D | blender | apt" 
+    "Dev / C++ | cmake | apt" 
+    "Dev / C++ | g++ | apt" 
+    "Dev / C++ | ninja-build  | apt" 
+    "Dev / DB | sqlitebrowser | apt" 
+    "Dev / Diff | meld | apt" 
+    "Dev / Docker | docker | apt" 
+    "Dev / Docker | docker-compose | apt" 
+    "Dev / Docker | docker-doc | apt" 
+    "Dev / Docker | docker-registry | apt" 
+    "Dev / Docker | docker.io | apt" 
+    "Dev / Git | git | apt" 
+    "Dev / Git | GitFiend | deb | https://gitfiend.com/resources/GitFiend_0.42.0_amd64.deb" # https://gitfiend.com/all-downloads
+    "Dev / Git | github-desktop | apt" 
+    "Dev / Git | gitkraken | deb | https://release.gitkraken.com/linux/gitkraken-amd64.deb" 
+    "Dev / Git | Glint | AppImage | https://github.com/LogicOverSnacks/glint-release/releases/download/v1.4.1/Glint-1.4.1.AppImage" 
+    "Dev / Git | SmartGit | deb | https://www.syntevo.com/downloads/smartgit/smartgit-22_1_5.deb" # https://www.syntevo.com/smartgit/download/
+    "Dev / Git | sublime-merge | apt" 
+    "Dev / GTK | glade | apt" 
+    "Dev / Jetbrains | CLion | bin | https://download-cdn.jetbrains.com/cpp/CLion-2023.1.3.tar.gz" # https://www.jetbrains.com/clion/download/#section=linux
+    "Dev / Jetbrains | PyCharm | bin | https://download-cdn.jetbrains.com/python/pycharm-community-2023.1.2.tar.gz" # https://www.jetbrains.com/pycharm/download/#section=linux
+    "Dev / Jetbrains | Rider | bin | https://download-cdn.jetbrains.com/rider/JetBrains.Rider-2023.1.2.tar.gz" # https://www.jetbrains.com/rider/download/#section=linux
+    "Dev / Jetbrains | WebStorm | bin | https://download-cdn.jetbrains.com/webstorm/WebStorm-2023.1.2.tar.gz" # https://www.jetbrains.com/webstorm/download/#section=linux
+    "Dev / Node | nodejs  | apt" 
+    "Dev / Node | npm  | apt" 
+    "Dev / Python | python3-pip | apt" 
+    "Dev / Qt | qtcreator | apt" 
+    "Dev / REST | httpie  | apt" 
+    "Dev / ReverseEngineering | gameconqueror | apt" 
+    "Dev / ReverseEngineering | wireshark | apt" 
+    "Dev / VSCode | apt-transport-https  | apt" 
+    "Dev / VSCode | code  | apt" 
+    "Disk / Archivers | peazip | deb | https://github.com/peazip/PeaZip/releases/download/9.2.0/peazip_9.2.0.LINUX.GTK2-1_amd64.deb" # https://peazip.github.io/peazip-linux.html 
+    "Disk / Archivers | rar | apt" 
+    "Disk / Backup | clonezilla | apt" 
+    "Disk / Backup | unison-gtk | apt" 
+    "Disk / Duplicate-Finder | fdupes | apt" 
+    "Disk / FileManager | doublecmd-qt | apt"
+    "Disk / FileManager | krusader | apt" 
+    "Disk / FileManager | nemo-media-columns | apt" 
+    "Disk / FileManager | nemo-seahorse | apt" 
+    "Disk / FileManager | nemo-share | apt" 
+    "Disk / FileManager | nemo-terminal | apt" 
+    "Disk / Partition | gparted | apt" 
+    "Disk / Search | catfish | apt" 
+    "Games | steam:i386 | apt" 
+    "Graphics / Editor  | gimp | apt" 
+    "Graphics / Screenshots | flameshot | apt" 
+    "Graphics / Screenshots | shutter | apt" 
+    "Graphics / Viewer  | XnViewMP | deb | https://download.xnview.com/XnViewMP-linux-x64.deb"  # https://www.xnview.com/en/xnviewmp/#downloads
+    "Graphics / Viewer | gthumb | apt" 
+    "Hardware / Benchmark | Geekbench5 | bin | https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz" # https://www.geekbench.com/legacy/
+    "Hardware / Benchmark | Geekbench6 | bin | https://cdn.geekbench.com/Geekbench-6.0.3-Linux.tar.gz" # https://www.geekbench.com/download/
+    "Hardware / Benchmark | iperf | apt" 
+    "Hardware / Benchmark | kdiskmark | apt" 
+    "Hardware / Benchmark | mangohud | apt" 
+    "Hardware / Benchmark | speedtest-cli | apt" 
+    "Hardware / CPU | cpulimit | apt" 
+    "Hardware / Display | xbacklight | apt" 
+    "Hardware / IOT | hyperion | deb | https://github.com/hyperion-project/hyperion.ng/releases/download/2.0.15/Hyperion-2.0.15-Linux-x86_64.deb" # https://github.com/hyperion-project/hyperion.ng/releases 
+    "Hardware / Joystick | jstest-gtk | apt" 
+    "Hardware / Monitoring | psensor | apt" 
+    "Hardware / Mouse | barrier | apt" 
+    "Hardware / Mouse | imwheel | apt" 
+    "Hardware / Power | powertop | apt" 
+    "Internet / Browser | opera-stable | apt"
+    "Internet / Downloader | aria2 | apt" 
+    "Internet / Downloader | axel | apt" 
+    "Internet / Downloader | uget | apt" 
+    "Internet / Downloader | uget-integrator | apt" 
+    "Internet / Firewall | opensnitch | deb | https://github.com/evilsocket/opensnitch/releases/download/v1.6.0-rc.5/opensnitch_1.6.0-rc.5-1_amd64.deb" # https://github.com/evilsocket/opensnitch/releases
+    "Internet / FTP | filezilla | apt" 
+    "Internet / Mail | evolution | apt" 
+    "Internet / Messenger | Telegram | bin | https://updates.tdesktop.com/tlinux/tsetup.4.8.3.tar.xz" # https://desktop.telegram.org/
+    "Internet / Music | spotify-client | apt" 
+    "Internet / RDP | krdc | apt" 
+    "Internet / RDP | xrdp | apt" 
+    "Internet / Samba | samba | apt" 
+    "Internet / Samba | wsdd | apt" 
+    "Internet / Terminal | moserial | apt" 
+    "Internet / Terminal | putty | apt" 
+    "Internet / Torrents | deluge | apt" 
+    "Internet / Torrents | qbittorrent | apt" 
+    "Internet / Traceroute | traceroute | apt" 
+    "Internet / WakeOnLan | gwakeonlan | apt" 
+    "System / Automation | d-feet | apt" 
+    "System / Automation | dconf-editor | apt" 
+    "System / Automation | xdotool | apt" 
+    "System / Bash-Utils | pv | apt" 
+    "System / Clean | bleachbit | apt" 
+    "System / Clipboard | xclip | apt" 
+    "System / Launcher | kupfer | apt" 
+    "System / Load-Monitoring | iftop | apt" 
+    "System / Load-Monitoring | indicator-multiload | apt" 
+    "System / Load-Monitoring | nethogs | apt" 
+    "System / Load-Monitoring | nvtop | apt" 
+    "System / PacketManager | appimagelauncher | apt"
+    "System / PacketManager | synaptic | apt"
+    "Text | micro | apt" 
+    "Text | obsidian | deb | https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.4/obsidian_1.3.4_amd64.deb" # https://obsidian.md/download
+    "Text | sublime-text | apt" 
+    "Text | typora | deb | https://download.typora.io/linux/typora_1.6.6_amd64.deb" # https://typora.io/#linux
+    "Video / Converter | handbrake | apt" 
+    "Video / Player | vlc | apt" 
+    "Video / ScreenRecorder | obs-studio | apt" 
+    "Video / ScreenRecorder | peek | apt" 
+    "Video / ScreenRecorder | simplescreenrecorder | apt" 
+    "VM / VirtualBox | virtualbox-guest-additions-iso | apt" 
+    "VM / VirtualBox | virtualbox-qt | apt" 
+    "VM / VMWare | open-vm-tools-desktop | apt" 
+    "VM / VMWare | vmware-workstation | bundle | https://download3.vmware.com/software/WKST-1702-LX/VMware-Workstation-Full-17.0.2-21581411.x86_64.bundle" # https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html
+    "VM / wine | lutris | apt"
+    # "Dev / Git | Gittyup | flatpak | com.github.Murmele.Gittyup" # todo
+    #"Hardware / Battery | laptop-mode-tools | apt" 
+    #"Hardware / Battery | tlp | apt" 
+    #"Hardware / Battery | tlpui | apt" 
+
 )
 
 # after installing apps offline, run "apt install -f -y" to get the list of required additional libs and put it here
@@ -88,6 +170,7 @@ libs=(
     libwxbase3.0-0v5 
     libwxgtk3.0-gtk3-0v5
 )
+
 
 
 add_repos(){
@@ -107,16 +190,30 @@ add_repos(){
         # kdiskmark
         sudo add-apt-repository -y ppa:jonmagon/kdiskmark 
 
-        # doublecmd-qt
-        echo 'deb http://download.opensuse.org/repositories/home:/Alexx2000/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/home:Alexx2000.list
-        curl -fsSL https://download.opensuse.org/repositories/home:Alexx2000/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_Alexx2000.gpg > /dev/null
-
         # vscode
         wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/tee packages.microsoft.gpg > /dev/null
         sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
         sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
         # sudo apt-get install apt-transport-https
         sudo apt-get updatefailed_down_packages
+
+        # opera
+        wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=i386,amd64] https://deb.opera.com/opera-stable/ stable non-free"
+
+        # github-desktop
+        wget -qO - https://apt.packages.shiftkey.dev/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/shiftkey-packages.gpg > /dev/null
+        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/shiftkey-packages.gpg] https://apt.packages.shiftkey.dev/ubuntu/ any main" > /etc/apt/sources.list.d/shiftkey-packages.list'
+
+        # sublime-merge
+        wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
+        echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+
+        # uget-integrator
+        sudo add-apt-repository -y ppa:uget-team/ppa
+
+        # tlpui
+        sudo add-apt-repository -y ppa:linuxuprising/apps
 
         cd ..; rm -r "repo.temp"
     fi
@@ -147,9 +244,9 @@ remove_old_temp_files(){
         done
 
         if [[ -v CONFIRM_ALL ]]; then confirm="Y"; else 
-            read -p "Do you want to delete them? [y/N] " confirm
+            read -p "Do you want to delete them? [Y/n] " confirm
         fi
-        if [[ $confirm == [yY] ]]; then  ## Only delete the file if y or Y is pressed. Any other key would cancel it. It's safer this way.
+        if [[ $confirm == [yY] || $confirm == "" ]]; then  ## Only delete the file if y or Y is pressed. Any other key would cancel it. It's safer this way.
             for i in "${!temp_files[@]}"; do
                 rm "${temp_files[$i]}" && echo "File deleted: ${temp_files[$i]}"  ## Only echo if it was actually deleted and no error has happened. rm probably would send its own error info if it fails.
             done        
@@ -166,9 +263,9 @@ remove_old_temp_files(){
         done
 
         if [[ -v CONFIRM_ALL ]]; then confirm="Y"; else 
-            read -p "Do you want to delete them? [y/N] " delete
+            read -p "Do you want to delete them? [Y/n] " confirm
         fi
-        if [[ $delete == [yY] ]]; then  ## Only delete the file if y or Y is pressed. Any other key would cancel it. It's safer this way.
+        if [[ $confirm == [yY] || $confirm == "" ]]; then  ## Only delete the file if y or Y is pressed. Any other key would cancel it. It's safer this way.
             for i in "${!temp_dirs[@]}"; do
                 rm -r "${temp_dirs[$i]}" && echo "Directory deleted: ${temp_dirs[$i]}"  ## Only echo if it was actually deleted and no error has happened. rm probably would send its own error info if it fails.
             done        
@@ -187,9 +284,9 @@ download_with_apt_offline(){
     if [[ ! -v REDOWNLOAD_IF_EXIST && -f "$archive_name" ]]; then echo "Exist. Skipping."; return 0; fi
 
     # download
-    sudo apt-offline set "$pkg_name.sig" --install-packages "$pkg_name"
-    apt-offline get "$pkg_name.sig" --bundle "$archive_name.temp"
-    rm -f "$pkg_name.sig"
+    sudo apt-offline set "$archive_name.sig" --install-packages "$pkg_name"
+    apt-offline get "$archive_name.sig" --bundle "$archive_name.temp"
+    rm -f "$archive_name.sig"
     
     if [[ ! -f "$archive_name.temp" ]]; then return 1; fi
 
@@ -272,9 +369,13 @@ download_packages(){
         local pkg_name=$(echo "$pkg_info" | cut -d "|" -f 2)        
         local source=$(echo "$pkg_info" | cut -d "|" -f 3)
         local url=$(echo "$pkg_info" | cut -d "|" -f 4)
-        archive_name="$pkg_name.$source.zip"
+        local archive_name="$pkg_name.$source.zip"
+        archive_name=$(echo "$archive_name" | tr -d "$invalid_chars") # remove invalid characters
+
 
         echo -e "\n==================== Donwloading package $((i+1)) / ${#packages[@]}: \"$pkg_name\"  ===================="
+
+        
 
         if [[ $pkg_name == "" || $source == "" ]]; then add_failed_downloading "$pkg_info"; continue; fi
 
@@ -306,6 +407,11 @@ download_packages(){
         # downloading bin
         elif [[ $source == "bin" ]]; then
             if [[ -v SKIP_DOWNLOAD_BIN ]]; then continue; fi
+            if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
+
+        # downloading installer
+        elif [[ $source == "installer" ]]; then
+            if [[ -v SKIP_DOWNLOAD_INSTALLER ]]; then continue; fi
             if ! download_with_wget "$pkg_info" "$pkg_name" "$archive_name" "$url"; then add_failed_downloading "$pkg_info"; continue; fi
 
         else
@@ -598,12 +704,13 @@ install_packages(){
 
     for i in "${!packages[@]}"; do        
         local pkg_info=${packages[$i]}
-        local pkg_dir="$dir/$(echo "$pkg_info" | cut -d "|" -f 1 | xargs)" # xargs for trim spaces
-        local pkg_name=$(echo "$pkg_info" | cut -d "|" -f 2 | xargs)        
+        local pkg_dir="$dir/$(echo "$pkg_info" | cut -d "|" -f 1 | sed 's/ //g')" # remove spaces
+        local pkg_name=$(echo "$pkg_info" | cut -d "|" -f 2 | xargs) # xargs for trim spaces       
         local source=$(echo "$pkg_info" | cut -d "|" -f 3 | xargs)
         local url=$(echo "$pkg_info" | cut -d "|" -f 4 | xargs)
         local args=$(echo "$pkg_info" | cut -d "|" -f 5 | xargs)
-        archive_name="$pkg_name.$source.zip"
+        local archive_name="$pkg_name.$source.zip"
+        archive_name=$(echo "$archive_name" | tr -d "$invalid_chars") # remove invalid characters
 
         echo -e "\n==================== Installing package $((i+1)) / ${#packages[@]}: \"$pkg_name\"  ===================="
 
@@ -638,9 +745,9 @@ install_packages(){
             if [[ -v SKIP_INSTALL_BIN ]]; then continue; fi
             if ! install_bin "$pkg_name" "$archive_name" ; then add_failed_install "$pkg_info"; continue; fi
 
-        # install bin
+        # install installer
         elif [[ $source == "installer" ]]; then
-            if [[ -v SKIP_INSTALL_BIN ]]; then continue; fi
+            if [[ -v SKIP_INSTALL_INSTALLER ]]; then continue; fi
             if ! install_installer "$pkg_name" "$archive_name" "$args"; then add_failed_install "$pkg_info"; continue; fi
 
         else
@@ -739,6 +846,15 @@ create_offline_installers(){
     clear
     echo "This script will help you create software installation packages that you can re-install offline on a freshly installed Linux system."
     echo ""
+    echo "To download programs with all dependencies, you need to run this script on a freshly installed system that hasn't been updated with packages or installed any programs yet."
+    echo "Only in this way will you get programs with all the libraries that can be installed offline."
+    echo ""
+    echo "However, you can also use this script to quickly install all the necessary software on any system, not necessarily fresh. But keep in mind that in this case, the program archives will only have dependencies necessary for the current state of the system and will not be suitable for a freshly installed system."
+    echo ""
+    echo "This wizard will tell you how to download programs on a fresh system installed in a virtual machine." 
+    echo "If you run the script on a bare, freshly installed system, then you don't need a virtual machine and this wizard, just edit the list of required software in this script, re-run the script and download the packages (mode D) and install (mode I)."
+    echo ""
+    echo ""
     echo "Step1:"
     echo ""
     echo "- Edit this script CONFIG section, add software and libraries you like."
@@ -803,7 +919,7 @@ then
 fi
 
 
-
+invalid_chars="\/:*?\"<>|"
 
 # ------------------------------------------------------------------------------
 
@@ -817,35 +933,35 @@ fi
 
 
 if [[ ! -v MODE || $MODE == "" ]]; then
-    echo "1. Start Wizard (recomended)"
-    echo "2. Download packages"
-    echo "3. Install packages offline"
+    echo "D - Download packages"
+    echo "I - Install packages offline"
+    echo "S - Start interactive help wizard (recomended)"
     read -p "Select mode:" MODE
 fi
 
 # Create offline package installers
-if [[ $MODE == [1] ]]; then 
+if [[ $MODE == [sS] ]]; then 
     create_offline_installers
     exit
 fi
 
 
 # Download packages
-if [[ $MODE == [2] || $MODE == "--download" ]]; then 
+if [[ $MODE == [dD] || $MODE == "--download" ]]; then 
     remove_old_temp_files
     add_repos
     apt update
     download_packages "./" "${soft[@]}"
-    download_libs "./LINUX-LIBS/" "${libs[@]}"
+    download_libs "./Libs/" "${libs[@]}"
     print_result
     exit
 fi
 
 # Install packages offline
-if [[ $MODE == [3] || $MODE == "--install" ]]; then 
+if [[ $MODE == [iI] || $MODE == "--install" ]]; then 
     remove_old_temp_files
     install_packages "./" "${soft[@]}"
-    install_libs "./LINUX-LIBS/" "${libs[@]}"
+    install_libs "./Libs/" "${libs[@]}"
     apt install -f -y # fix issues
     print_result
     exit
